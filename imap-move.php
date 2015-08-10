@@ -51,10 +51,10 @@ if (!function_exists('imap_open')) {
 
 _args($argc,$argv);
 
-echo "Connecting Source...\n";
+echo "\nS: ";
 $S = new IMAP($_ENV['src']);
 
-echo "Connecting Target...\n";
+echo "\nT: ";
 $T = new IMAP($_ENV['tgt']);
 
 $src_path_list = $S->listPath();
@@ -175,7 +175,7 @@ class IMAP
                 $this->_c_base = $x;
             }
         }
-        echo "imap_open($this->_c_host)\n";
+        echo "Connecting to $this->_c_host\n";
         $this->_c = imap_open($this->_c_host,$uri['user'],$uri['pass']);
         // echo implode(', ',imap_errors());
     }
