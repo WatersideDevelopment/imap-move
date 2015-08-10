@@ -39,6 +39,15 @@
 
 error_reporting(E_ALL | E_STRICT);
 
+// IMAP support on PHP is not a standard feature...
+if (!function_exists('imap_open')) {
+    echo "\nFATAL_ERROR: imap_open not found!\n\n";
+    echo "Please ensure that your installation of PHP has IMAP support\n\n";
+    echo "This can be done in several ways, apt-get, yum, brew, etc.\n\n";
+    echo "Please see your network administrator, O.S. Dcumentation,\n a Qualified Professional for details. :)\n\n";
+    exit(-1);
+}
+
 _args($argc,$argv);
 
 echo "Connecting Source...\n";
