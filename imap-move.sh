@@ -20,7 +20,6 @@ php ./imap-move.php --fake --source $s --target $t
 #
 # Uncomment as you feel brave enough / at your own risk!
 
-
 # Or Copy Source
 #php ./imap-move.php --copy --source $s --target $d
 
