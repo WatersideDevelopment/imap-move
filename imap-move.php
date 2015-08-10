@@ -191,10 +191,7 @@ class IMAP
     function mailPut($mail,$opts,$date)
     {
         $stat = $this->pathStat();
-        // print_r($stat);
-        // $opts = '\\Draft'; // And Others?
-        // $opts = null;
-        // exit;
+        if (empty($mail)) $mail = 'This message has no content';
         $ret = imap_append($this->_c,$stat['check_path'],$mail,$opts,$date);
         if ($buf = imap_errors()) {
             die(print_r($buf,true));
