@@ -90,7 +90,8 @@ foreach ($src_path_list as $path) {
     $tgt_mail_list = array();
     for ($i=1;$i<=$tgt_path_stat['mail_count'];$i++) {
         $mail = $T->mailStat($i);
-        $tgt_mail_list[ $mail['message_id'] ] = !empty($mail['subject']) ? $mail['subject'] : "[ No Subject ] Message $i";
+        if (array_key_exists('message_id', $mail))
+            $tgt_mail_list[ $mail['message_id'] ] = !empty($mail['subject']) ? $mail['subject'] : "[ No Subject ] Message $i";
     }
 
     for ($src_idx=$src_path_stat['mail_count'];$src_idx>=1;$src_idx--) {
