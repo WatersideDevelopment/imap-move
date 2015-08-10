@@ -101,15 +101,16 @@ foreach ($src_path_list as $path) {
         $stat['unseen'] = trim($stat['Unseen']);
         if (empty($stat['subject'])) $stat['subject'] = "[ No Subject ] Message $src_idx";
 
-        if (array_key_exists($stat['message_id'],$tgt_mail_list)) {
-            echo "S:$src_idx Mail: {$stat['subject']} Copied Already\n";
-            $S->mailWipe($i);
-            continue;
-        }
+        if (array_key_exists('message_id', $stat))
+            if (array_key_exists($stat['message_id'],$tgt_mail_list)) {
+                echo "S:$src_idx Mail: {$stat['subject']} Copied Already\n";
+                $S->mailWipe($i);
+                continue;
+            }
 
         echo "S:$src_idx {$stat['subject']} ({$stat['MailDate']})\n   {$src_path_stat['path']} => ";
         if ($_ENV['fake']) {
-            echo "\n";
+            echo " (FAKED)\n";
             continue;
         }
 
@@ -123,7 +124,6 @@ foreach ($src_path_list as $path) {
         $date = strftime('%d-%b-%Y %H:%M:%S +0000',strtotime($stat['MailDate']));
 
         if ($res = $T->mailPut(file_get_contents('mail'),$opts,$date)) {
-            // echo "T: $res\n";
             $S->mailWipe($src_idx);
             echo "{$tgt_path_stat['path']}\n";
         } else {
@@ -156,6 +156,12 @@ class IMAP
             break;
         case 'imap-tls':
             $this->_c_host.= '/tls';
+            break;
+        case 'imap-novalidate-cert':
+            $this->_c_host.= '/novalidate-cert';
+            break;
+        case 'imap':
+            $this->_c_host.= '/';
             break;
         default:
         }
@@ -240,11 +246,10 @@ class IMAP
     */
     function setPath($p,$make=false)
     {
-        // echo "setPath($p);\n";
+
         if (substr($p,0,1)!='{') {
             $p = $this->_c_host . trim($p,'/');
         }
-        // echo "setPath($p);\n";
 
         $ret = imap_reopen($this->_c,$p); // Always returns true :(
         $buf = imap_errors();
@@ -254,7 +259,7 @@ class IMAP
 
         $buf = implode(', ',$buf);
         if (preg_match('/EXIST/i',$buf)) {
-            // Likley Couldn't Open on Gmail Side, So Create
+            // Couldn't Open on Target Side, So Create
             $ret = imap_createmailbox($this->_c,$p);
             $buf = imap_errors();
             if (empty($buf)) {
@@ -300,6 +305,7 @@ function _args($argc,$argv)
     $_ENV['fake'] = false;
     $_ENV['once'] = false;
     $_ENV['wipe'] = false;
+    $_ENV['gmail'] = false;
 
     for ($i=1;$i<$argc;$i++) {
         switch ($argv[$i]) {
@@ -337,6 +343,9 @@ function _args($argc,$argv)
             break;
         case '--wipe':
             $_ENV['wipe'] = true;
+            break;
+        case '--gmail':
+            $_ENV['gmail'] = true;
             break;
         default:
             echo "arg: {$argv[$i]}\n";
