@@ -10,6 +10,7 @@ This will move messages from one IMAP system to another
     --fake to just list what would be copied
     --wipe to remove messages after they are copied (move)
     --copy to store copies of the messages in a path
+    --gmail to use special google-mail prefixes for destination folders
 
 
 ## Shell Wrapper

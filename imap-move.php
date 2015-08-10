@@ -32,6 +32,7 @@
  *         --fake to just list what would be copied
  *         --wipe to remove messages after they are copied (move)
  *         --copy to store copies of the messages in a path
+ *         --gmail to use special google-mail prefixes for folders upon write
  *
  * Further examples, and help, can be found in the wrapper file imap-move.sh
  *
@@ -55,12 +56,8 @@ $S = new IMAP($_ENV['src']);
 
 echo "Connecting Target...\n";
 $T = new IMAP($_ENV['tgt']);
-//$tgt_path_list = $T->listPath();
-//print_r($tgt_path_list);
 
 $src_path_list = $S->listPath();
-// print_r($src_path_list);
-// exit;
 
 foreach ($src_path_list as $path) {
 
@@ -96,16 +93,12 @@ foreach ($src_path_list as $path) {
         $tgt_mail_list[ $mail['message_id'] ] = !empty($mail['subject']) ? $mail['subject'] : "[ No Subject ] Message $i";
     }
 
-    // print_r($tgt_mail_list);
-
-    // for ($src_idx=1;$src_idx<=$src_path_stat['mail_count'];$src_idx++) {
     for ($src_idx=$src_path_stat['mail_count'];$src_idx>=1;$src_idx--) {
 
         $stat = $S->mailStat($src_idx);
         $stat['answered'] = trim($stat['Answered']);
         $stat['unseen'] = trim($stat['Unseen']);
         if (empty($stat['subject'])) $stat['subject'] = "[ No Subject ] Message $src_idx";
-        // print_r($stat['message_id']); exit;
 
         if (array_key_exists($stat['message_id'],$tgt_mail_list)) {
             echo "S:$src_idx Mail: {$stat['subject']} Copied Already\n";
@@ -363,12 +356,13 @@ function _args($argc,$argv)
 function _path_map($x)
 {
     if (preg_match('/}(.+)$/',$x,$m)) {
-        switch (strtolower($m[1])) {
-        // case 'inbox':         return null;
-        case 'deleted items': return '[Gmail]/Trash';
-        case 'drafts':        return '[Gmail]/Drafts';
-        case 'junk e-mail':   return '[Gmail]/Spam';
-        case 'sent items':    return '[Gmail]/Sent Mail';
+        if($_ENV['gmail']){
+            switch (strtolower($m[1])) {
+                case 'drafts':        return '[Gmail]/Drafts';
+                case 'junk e-mail':   return '[Gmail]/Spam';
+                case 'sent items':    return '[Gmail]/Sent Mail';
+                case 'deleted items': return '[Gmail]/Trash';
+            }
         }
         $x = str_replace('INBOX/',null,$m[1]);
     }
@@ -414,3 +408,5 @@ function _path_skip($path)
 
     return false;
 }
+
+exit(0);
