@@ -103,7 +103,7 @@ foreach ($src_path_list as $path) {
 
         if (array_key_exists('message_id', $stat))
             if (array_key_exists($stat['message_id'],$tgt_mail_list)) {
-                echo "S:$src_idx Mail: {$stat['subject']} Copied Already\n";
+                echo "S:$src_idx Mail: {$stat['subject']}\nT: Already Present\n";
                 $S->mailWipe($i);
                 continue;
             }
@@ -244,7 +244,7 @@ class IMAP
     /**
         Sets the Current Mailfolder, Creates if Needed
     */
-    function setPath($p,$make=false)
+    function setPath($p)
     {
 
         if (substr($p,0,1)!='{') {
