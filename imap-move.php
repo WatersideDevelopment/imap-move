@@ -157,6 +157,12 @@ class IMAP
         case 'imap-tls':
             $this->_c_host.= '/tls';
             break;
+        case 'imap-novalidate-cert':
+            $this->_c_host.= '/novalidate-cert';
+            break;
+        case 'imap':
+            $this->_c_host.= '/';
+            break;
         default:
         }
         $this->_c_host.= '}';
@@ -300,6 +306,7 @@ function _args($argc,$argv)
     $_ENV['fake'] = false;
     $_ENV['once'] = false;
     $_ENV['wipe'] = false;
+    $_ENV['gmail'] = false;
 
     for ($i=1;$i<$argc;$i++) {
         switch ($argv[$i]) {
@@ -337,6 +344,9 @@ function _args($argc,$argv)
             break;
         case '--wipe':
             $_ENV['wipe'] = true;
+            break;
+        case '--gmail':
+            $_ENV['gmail'] = true;
             break;
         default:
             echo "arg: {$argv[$i]}\n";
